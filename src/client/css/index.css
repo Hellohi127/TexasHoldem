@@ -148,3 +148,18 @@ code {
   position: relative;
   z-index: -1 !important;
 }
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.card-animate {
+  animation: slideIn 1s ease-out forwards; /* Animation lasts for 1 second */
+  opacity: 0; /* Start hidden */
+}

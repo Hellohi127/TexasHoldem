@@ -129,13 +129,22 @@ socket.on('rerender', function (data) {
   } else {
     $('#usernamesCards').text(data.username + ' - My Bet: $' + data.myBet);
   }
-  if (data.community != undefined)
-    $('#communityCards').html(
-      data.community.map(function (c) {
-        return renderCard(c);
-      })
-    );
-  else $('#communityCards').html('<p></p>');
+  if (data.community != undefined) {
+    $('#communityCards').html(''); // Clear existing cards
+    data.community.forEach((card, index) => {
+      const cardHTML = renderCard(card); // Render card using existing renderCard function
+      const cardElement = $(cardHTML);  // Create jQuery object for manipulation
+      cardElement.addClass('card-animate');  // Add the animation class
+  
+      // Stagger the appearance of cards
+      setTimeout(() => {
+        $('#communityCards').append(cardElement); // Add card to the DOM after delay
+      }, index * 500); // 500ms delay for each card
+    });
+  } else {
+    $('#communityCards').html('<p></p>');
+  }
+  
   if (data.currBet == undefined) data.currBet = 0;
   $('#table-title').text(
     'Game ' +
