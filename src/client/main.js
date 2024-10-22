@@ -4,6 +4,8 @@ $(document).ready(function () {
   $('.tooltipped').tooltip({ delay: 50 });
 });
 
+
+let currentCommunityCardsCount = 0;  // Track how many community cards are already displayed
 var socket = io();
 var gameInfo = null;
 
@@ -130,20 +132,28 @@ socket.on('rerender', function (data) {
     $('#usernamesCards').text(data.username + ' - My Bet: $' + data.myBet);
   }
   if (data.community != undefined) {
-    $('#communityCards').html(''); // Clear existing cards
-    data.community.forEach((card, index) => {
-      const cardHTML = renderCard(card); // Render card using existing renderCard function
-      const cardElement = $(cardHTML);  // Create jQuery object for manipulation
-      cardElement.addClass('card-animate');  // Add the animation class
+    const newCardsCount = data.community.length - currentCommunityCardsCount; // New cards to be added
   
-      // Stagger the appearance of cards
+    // Loop through only the new cards
+    for (let i = currentCommunityCardsCount; i < data.community.length; i++) {
+      const card = data.community[i];
+      const cardHTML = renderCard(card);  // Render card using the existing function
+      const cardElement = $(cardHTML);  // Create a jQuery object for manipulation
+      cardElement.addClass('card-animate');  // Add the animation class for new card
+  
+      // Use setTimeout to stagger the animation for the new cards
       setTimeout(() => {
-        $('#communityCards').append(cardElement); // Add card to the DOM after delay
-      }, index * 500); // 500ms delay for each card
-    });
+        $('#communityCards').append(cardElement);  // Add new card to the DOM
+      }, (i - currentCommunityCardsCount) * 500); // 500ms delay per card
+    }
+  
+    // Update the number of community cards displayed
+    currentCommunityCardsCount = data.community.length;
   } else {
     $('#communityCards').html('<p></p>');
+    currentCommunityCardsCount = 0;  // Reset if no community cards are present
   }
+  
   
   if (data.currBet == undefined) data.currBet = 0;
   $('#table-title').text(
