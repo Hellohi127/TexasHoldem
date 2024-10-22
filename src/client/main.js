@@ -131,28 +131,36 @@ socket.on('rerender', function (data) {
   } else {
     $('#usernamesCards').text(data.username + ' - My Bet: $' + data.myBet);
   }
-  if (data.community != undefined) {
-    const newCardsCount = data.community.length - currentCommunityCardsCount; // New cards to be added
   
-    // Loop through only the new cards
+  if (data.community != undefined) {
+    // Check if we need to clear the community cards (for example, at the start of a new round)
+    if (data.community.length === 0) {
+      $('#communityCards').html('');  // Clear community cards
+      currentCommunityCardsCount = 0;  // Reset the count
+    }
+  
+    // Now add only the new cards that haven't been displayed yet
+    const newCardsCount = data.community.length - currentCommunityCardsCount;
+  
     for (let i = currentCommunityCardsCount; i < data.community.length; i++) {
       const card = data.community[i];
-      const cardHTML = renderCard(card);  // Render card using the existing function
+      const cardHTML = renderCard(card);  // Render the card using the existing function
       const cardElement = $(cardHTML);  // Create a jQuery object for manipulation
-      cardElement.addClass('card-animate');  // Add the animation class for new card
+      cardElement.addClass('card-animate');  // Add the animation class for new cards
   
       // Use setTimeout to stagger the animation for the new cards
       setTimeout(() => {
-        $('#communityCards').append(cardElement);  // Add new card to the DOM
-      }, (i - currentCommunityCardsCount) * 500); // 500ms delay per card
+        $('#communityCards').append(cardElement);  // Append the new card to the DOM
+      }, (i - currentCommunityCardsCount) * 500);  // 500ms delay for each new card
     }
   
     // Update the number of community cards displayed
     currentCommunityCardsCount = data.community.length;
   } else {
     $('#communityCards').html('<p></p>');
-    currentCommunityCardsCount = 0;  // Reset if no community cards are present
+    currentCommunityCardsCount = 0;  // Reset the count if no community cards are present
   }
+  
   
   
   if (data.currBet == undefined) data.currBet = 0;
