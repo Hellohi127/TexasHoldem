@@ -25,51 +25,41 @@
 	</header>
 	<div id="gameDiv">
 		<h4 class="white-text">Texas Hold 'Em Game</h4>
-		<div class="row">
-			<div class="col s12 m3">
-				<div id="playerInformationCard" class="card green darken-2">
-					<div class="card-content white-text">
-						<span class="card-title" id="usernamesCards"></span>
-						<div id="mycards"></div>
-					</div>
-				</div>
-			</div>
-			<div class="col s12 m2">
-				<div class="card green darken-2">
-					<div class="card-content white-text center-align">
-						<span class="card-title center-align" id="usernamesMoney"></span>
-						<div id="blindStatus"></div>
-						<div id="status"></div>
-						<br />
-						<div id="playNext"></div>
-						<button onClick=fold() id="usernameFold" class="btn white black-text menuButtons">Fold</button>
-						<br />
-						<button onClick=check() id="usernameCheck" class="btn white black-text menuButtons">Check</button>
-						<br />
-						<button href="#betModal" onClick=updateBetModal() id="usernameBet"
-							class="btn white black-text modal-trigger menuButtons">Bet</button>
-						<br />
-						<button onClick=call() id="usernameCall" class="btn white black-text menuButtons">Call</button>
-						<br />
-						<button href="#raiseModal" onClick=updateRaiseModal() id="usernameRaise"
-							class="btn white black-text modal-trigger menuButtons">Raise</button>
-					</div>
-				</div>
-			</div>
-			<div class="col s12 m7">
-				<div class="card green darken-2">
-					<div class="card-content white-text">
-						<span id="table-title" class="card-title"></span>
-
-						<div id="communityCards"></div>
-					</div>
-				</div>
-			</div>
+	  
+		<!-- Poker Table (Oval) -->
+		<div id="tableContainer">
+		  <div id="pokerTable">
+			<!-- Community cards inside the table -->
+			<div id="communityCards"></div>
+			<!-- Display pot money at the top center of the table -->
+			<div id="potMoney" class="white-text">Pot: $0</div>
+		  </div>
+	  
+		  <!-- Opponent cards around the table -->
+		  <div id="opponentCardsTop"></div>
+		  <div id="opponentCardsLeft"></div>
+		  <div id="opponentCardsRight"></div>
 		</div>
-		<div class="row">
-			<div id="opponentCards"></div>
+	  
+		<!-- Player's cards at the bottom center -->
+		<div id="playerCardsContainer">
+		  <div id="playerInformationCard" class="card green darken-2">
+			<div class="card-content white-text">
+			  <span class="card-title" id="usernamesCards"></span>
+			  <div id="mycards"></div>
+			</div>
+		  </div>
+		  <div id="userControls" class="center-align">
+			<!-- Controls like Fold, Check, Bet -->
+			<button onClick=fold() id="usernameFold" class="btn white black-text menuButtons">Fold</button>
+			<button onClick=check() id="usernameCheck" class="btn white black-text menuButtons">Check</button>
+			<button href="#betModal" onClick=updateBetModal() id="usernameBet" class="btn white black-text modal-trigger menuButtons">Bet</button>
+			<button onClick=call() id="usernameCall" class="btn white black-text menuButtons">Call</button>
+			<button href="#raiseModal" onClick=updateRaiseModal() id="usernameRaise" class="btn white black-text modal-trigger menuButtons">Raise</button>
+		  </div>
 		</div>
-	</div>
+	  </div>
+	  
 	<div id="mainContent">
 		<div class=" valign-wrapper row login-box">
 			<div class="col card hoverable s12 m4">
