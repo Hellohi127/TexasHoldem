@@ -148,3 +148,55 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => console.log(`hosting on port ${PORT}`));
+
+const rooms = {};
+
+// When creating a room
+socket.on('hostRoom', (roomCode, password) => {
+  rooms[roomCode] = {
+    host: socket.id,
+    players: [socket.id],
+    password: password,
+    isFull: false,
+  };
+});
+
+// When a player joins a room
+socket.on('joinRoom', (roomCode, enteredPassword) => {
+  if (rooms[roomCode] && rooms[roomCode].password === enteredPassword) {
+    if (!rooms[roomCode].isFull) {
+      rooms[roomCode].players.push(socket.id);
+      socket.emit('joinSuccess');
+      // Emit updates to clients
+      io.emit('updateRooms', rooms);
+    } else {
+      socket.emit('roomFull');
+    }
+  } else {
+    socket.emit('invalidPassword');
+  }
+});
+
+// Provide available rooms to the client
+socket.on('listRooms', () => {
+  const openRooms = Object.entries(rooms)
+    .filter(([roomCode, roomData]) => !roomData.isFull)
+    .map(([roomCode, roomData]) => ({
+      code: roomCode,
+      numPlayers: roomData.players.length,
+    }));
+
+  socket.emit('roomList', openRooms);
+});
+
+// Remove the player from rooms on disconnect
+socket.on('disconnect', () => {
+  for (let roomCode in rooms) {
+    rooms[roomCode].players = rooms[roomCode].players.filter(playerId => playerId !== socket.id);
+    if (rooms[roomCode].players.length === 0) {
+      delete rooms[roomCode];
+    }
+  }
+  // Emit updates to clients after a player leaves
+  io.emit('updateRooms', rooms);
+});

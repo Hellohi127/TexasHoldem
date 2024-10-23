@@ -859,3 +859,52 @@ function renderSelf(data) {
   $('#blindStatus').text(data.blind);
 }
 
+// Request to list open rooms when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+  socket.emit('listRooms');
+});
+
+// Function to display open rooms
+socket.on('roomList', (rooms) => {
+  const roomsContainer = document.getElementById('roomsContainer');
+  roomsContainer.innerHTML = ''; // Clear current list
+
+  rooms.forEach((room) => {
+    const roomCard = document.createElement('div');
+    roomCard.classList.add('col', 's12', 'm6', 'l4');
+    roomCard.innerHTML = `
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Room Code: ${room.code}</span>
+          <p>Players: ${room.numPlayers}</p>
+        </div>
+        <div class="card-action">
+          <button class="btn waves-effect waves-light" onclick="joinRoomPrompt('${room.code}')">Join Room</button>
+        </div>
+      </div>
+    `;
+    roomsContainer.appendChild(roomCard);
+  });
+});
+
+// Function to prompt for room password and attempt to join
+function joinRoomPrompt(roomCode) {
+  const password = prompt('Enter room password:');
+  if (password) {
+    socket.emit('joinRoom', roomCode, password);
+  }
+}
+
+// Listen for server responses for room join status
+socket.on('invalidPassword', () => {
+  alert('Invalid password. Please try again.');
+});
+
+socket.on('roomFull', () => {
+  alert('The room is full. Please try a different room.');
+});
+
+socket.on('joinSuccess', () => {
+  // Redirect to the game page or update UI accordingly
+  alert('Successfully joined the room!');
+});
