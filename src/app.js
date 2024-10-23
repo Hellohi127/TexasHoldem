@@ -149,8 +149,6 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, () => console.log(`hosting on port ${PORT}`));
 
-const rooms = {};
-
 // When creating a room
 socket.on('hostRoom', (roomCode, password) => {
   rooms[roomCode] = {
