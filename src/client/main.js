@@ -858,3 +858,37 @@ function renderSelf(data) {
   }
   $('#blindStatus').text(data.blind);
 }
+
+// Function to request and display open rooms
+function displayOpenRooms() {
+  socket.emit('listRooms');
+
+  socket.on('roomList', (rooms) => {
+    const roomsDiv = document.getElementById('openRoomsList');
+    roomsDiv.innerHTML = '';
+
+    rooms.forEach(roomCode => {
+      const roomElement = document.createElement('div');
+      roomElement.classList.add('room-item');
+      roomElement.innerHTML = `
+        <span>Room Code: ${roomCode}</span>
+        <button onclick="attemptJoinRoom('${roomCode}')">Join Room</button>
+      `;
+      roomsDiv.appendChild(roomElement);
+    });
+  });
+}
+
+// Function to attempt joining a room with password
+function attemptJoinRoom(roomCode) {
+  const password = prompt('Enter room password:');
+  socket.emit('joinRoom', roomCode, password);
+  
+  socket.on('invalidPassword', () => {
+    alert('Invalid password. Please try again.');
+  });
+
+  socket.on('roomFull', () => {
+    alert('The room is full. Please try a different room.');
+  });
+}
